@@ -8,7 +8,7 @@ use LWP();
 
 
 use vars qw($VERSION);
-$VERSION = '3.002'; # $Id: //depot/Tk-HTML/Web.pm#2$
+$VERSION = '3.002'; # $Id: //depot/Tk-HTML/Web.pm#3 $
 
 @ISA = qw(LWP::UserAgent);
 use strict;
@@ -21,7 +21,7 @@ sub Widget
  shift->_elem('Tk::Widget',  @_)
 }
 
-sub DESTROY {} 
+sub DESTROY {}
 
 sub get_basic_credentials
 {
@@ -29,7 +29,7 @@ sub get_basic_credentials
  my ($ua,$realm,$uri) = @_;
  my $netloc = $uri->netloc;
  my ($user,$passwd) = $ua->SUPER::get_basic_credentials($realm,$uri);
- unless (defined $user and defined $passwd) 
+ unless (defined $user and defined $passwd)
   {
    my $w  = $ua->Widget;
    my $mw = (defined $w) ? $w->Toplevel(-popover => $w) : MainWindow->new;
@@ -39,15 +39,15 @@ sub get_basic_credentials
    $passwd = $uri->password;
    $passwd = "" unless (defined $passwd);
    $mw->title($uri);
-   $mw->Label(-text => "Credentials for\n$realm\n$netloc")->pack; 
+   $mw->Label(-text => "Credentials for\n$realm\n$netloc")->pack;
    my $e = $mw->LabEntry(-label => 'Userid :',-labelPack => [-side => 'left'], -textvariable => \$user)->pack;
    $e = $mw->LabEntry(-label => 'Passwd :', -labelPack => [-side => 'left'], -show => '*', -textvariable => \$passwd)->pack;
    $e->bind('<Return>',[$mw,'destroy']);
    $mw->Button(-text => 'Ok',     -command => ['destroy',$mw])->pack(-side => 'left');
    $mw->Button(-text => 'Cancel', -command => sub { $user = $passwd = undef; $mw->destroy } )->pack(-side => 'right');
    $e->Subwidget('entry')->focus;
-   $mw->update;    
-   $mw->raise;     
+   $mw->update;
+   $mw->raise;
    $mw->Popup(-overanchor => 'n', -popanchor => 'n');
    eval {local $SIG{__DIE__}; $mw->grab } ;
    $mw->waitWindow;
@@ -59,7 +59,7 @@ sub get_basic_credentials
 package Tk::Web;
 
 use vars qw($VERSION);
-$VERSION = '2.007'; # $Id: //depot/Tk-HTML/Web.pm#2$
+$VERSION = '2.007'; # $Id: //depot/Tk-HTML/Web.pm#3 $
 
 require Tk::HTML;
 
@@ -85,13 +85,13 @@ sub LoadImage
  my ($w,$url) = @_;
  my $name = $url->as_string;
  my $file = '.'.++$filename;
- print "Loading $name to $file\n";    
+ print "Loading $name to $file\n";
  my $request  = new HTTP::Request('GET', $url);
  my $response = $w->UserAgent->request($request, $file);
- my $image = undef;                        
+ my $image = undef;
  my $format;
- if ($response->is_success)                 
-  {                                        
+ if ($response->is_success)
+  {
    my $type = $response->header('Content-type');
    my @try  = qw(Pixmap Bitmap Photo);
    if (defined $type)
@@ -119,8 +119,8 @@ sub LoadImage
      last unless ($@);
     }
    warn "$@" if ($@);
-   unlink($file);                          
-  }                                        
+   unlink($file);
+  }
  else
   {
    print "$name:",$response->as_string;
@@ -147,7 +147,7 @@ sub FindImage
   }
  elsif (exists $Image{$name})
   {
-   # failed in the past 
+   # failed in the past
   }
  else
   {
@@ -155,9 +155,9 @@ sub FindImage
     {
      $Loading{$name} = [];
      # $w->updateWidgets;
-     $w->DoWhenIdle([$w,'LoadImage',$url]); 
+     $w->DoWhenIdle([$w,'LoadImage',$url]);
     }
-   push(@{$Loading{$name}},$l); 
+   push(@{$Loading{$name}},$l);
   }
 }
 
@@ -184,7 +184,7 @@ sub InitObject
                  '-urlcommand' => ['CALLBACK',undef,undef,undef]
                 );
 }
-                           
+
 sub SetBindtags
 {
  my ($w) = @_;
@@ -229,25 +229,25 @@ sub getHTML
   }
  print "Requesting ",$url->as_string,"\n";
  my ($request, $head);
- if (defined $w->{'-header'}) 
+ if (defined $w->{'-header'})
   {
    $head = new HTTP::Headers(%{$w->{'-header'}});
-  } 
- else 
+  }
+ else
   {
    $head = new HTTP::Headers;
   }
- if (defined $content) 
+ if (defined $content)
   {
    $head->header('Content-type' => 'application/x-www-form-urlencoded');
    $request  = new HTTP::Request($method, $url, $head, $content);
-  } 
- else  
+  }
+ else
   {
    $request  = new HTTP::Request($method, $url, $head);
   }
  my $response = $w->UserAgent->request($request, undef, undef);
- my $html; 
+ my $html;
  if ($response->is_success)
   {
    return undef if $response->code == &HTTP::Status::RC_NO_CONTENT;
@@ -274,14 +274,14 @@ sub getHTML
        if ($html !~ m#^\s*</?(!|\w+)#)
         {
          $html =~ s/([^\w\s])/'&#'.ord($1).';'/eg;
-         $html = "<PRE>$html</PRE>" 
+         $html = "<PRE>$html</PRE>"
         }
       }
     }
    if ($method eq 'GET')
     {
-     $html = $w->parse($html);       
-     $cache{$url->as_string} = $html 
+     $html = $w->parse($html);
+     $cache{$url->as_string} = $html
     }
   }
  else
@@ -291,7 +291,7 @@ sub getHTML
  return $html;
 }
 
-sub base 
+sub base
 {
  my ($w,$text) = @_;
  my $var = \$w->{'base'};
@@ -328,7 +328,7 @@ sub url
        push(@args,$frag);
       }
      $w->Callback(-urlcommand => $url->as_string);
-     $w->html($html,@args); 
+     $w->html($html,@args);
     }
    $w->Unbusy;
   }
@@ -376,11 +376,11 @@ sub Open
    $w->{'Open'} = $o;
    $o->{'url'}  = $w->url;
    my $e = $o->LabEntry(-label => 'Location :',-labelPack => [ -side => 'left'],
-                -textvariable => \$o->{'url'}, -width => length($o->{'url'}))->pack(-fill => 'x');
-   my $b = $o->Button(-text => 'Open', 
-                      -command =>  sub {  $o->withdraw ; $w->HREF('GET',$o->{'url'}) } 
+                -textvariable => \$o->{'url'}, -width => 40)->pack(-fill => 'x');
+   my $b = $o->Button(-text => 'Open',
+                      -command =>  sub {  $o->withdraw ; $w->HREF('GET',$o->{'url'}) }
                      )->pack(-side => 'left',-anchor => 'w', -fill => 'x');
-   $e->bind('<Return>',[$b => 'invoke']); 
+   $e->bind('<Return>',[$b => 'invoke']);
    $o->Button(-text => 'Clear', -command => sub { $o->{'url'} = "" })->pack(-side => 'left',-anchor => 'c', -fill => 'x');
    $o->Button(-text => 'Current', -command => sub { $o->{'url'} = $w->url })->pack(-side => 'left',-anchor => 'c', -fill => 'x');
    $o->Button(-text => 'Cancel', -command => [ withdraw => $o ])->pack(-side => 'right',-anchor => 'e',-fill => 'x');

@@ -3,7 +3,7 @@ use AutoLoader;
 use Carp;
 
 use vars qw($VERSION);
-$VERSION = '3.002'; # $Id: //depot/Tk-HTML/HTML/Form.pm#2$
+$VERSION = '3.002'; # $Id: //depot/Tk-HTML/HTML/Form.pm#2 $
 
 @ISA = qw(AutoLoader HTML::Element);
 

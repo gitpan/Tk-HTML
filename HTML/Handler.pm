@@ -8,17 +8,17 @@ use Carp;
 delete $HTML::Element::OVERLOAD{'""'};
 
 use vars qw($VERSION $AUTOLOAD);
-$VERSION = '3.002'; # $Id: //depot/Tk-HTML/HTML/Handler.pm#2$
+$VERSION = '3.002'; # $Id: //depot/Tk-HTML/HTML/Handler.pm#3 $
 
 sub HTML::Element::enclosing
 {
  my $self = shift;
  my $must = shift;
  my $p = $self;
- while (defined $p) 
+ while (defined $p)
   {
    my $ptag = $p->{'_tag'};
-   for (@_) 
+   for (@_)
     {
      return $p if $ptag eq $_;
     }
@@ -28,14 +28,14 @@ sub HTML::Element::enclosing
  return undef;
 }
 
-my %FontTag = ('CITE' => 'I', 'STRONG' => 'B', 'EM' => 'B', 
+my %FontTag = ('CITE' => 'I', 'STRONG' => 'B', 'EM' => 'B',
                       'TT' => 'KBD', 'SAMP' => 'CODE');
 
-BEGIN 
+BEGIN
 {
  no strict 'refs';
- my $tag; 
- foreach $tag (qw(b i samp code kbd strong em var cite dfn tt))
+ my $tag;
+ foreach $tag (qw(b i samp code kbd strong em var cite dfn tt sup))
   {
    *{"$tag"} = \&FontTag;
   }
@@ -60,7 +60,7 @@ BEGIN
    *{"$tag"} = sub { shift->{widget}->$tag(@_) };
   }
 }
- 
+
 
 *th   = \&td;
 *link = \&a;
@@ -79,6 +79,7 @@ sub AUTOLOAD
   {
    print "$what(",join(',',@_),")\n";
   }
+ no strict "refs";
  *{"$what"} = sub { return 1 };
  goto &$what;
 }
@@ -287,7 +288,7 @@ sub tr_grid
    $table->{Row}++;
   }
  return $w;
-} 
+}
 
 sub p
 {
@@ -318,7 +319,7 @@ sub hr
  my ($h,$f,$elem) = @_;
  return 0 unless $f;
  my $w = $h->{widget};
- my $r = $w->Frame(-height => 2, 
+ my $r = $w->Frame(-height => 2,
                    -width => $w->cget('-width')*140,
                    -borderwidth => 1, -relief => 'sunken',
                   );
@@ -358,7 +359,7 @@ sub td_grid
    unless (defined $widget)
     {
      $widget = $tw->Label(-relief => 'ridge',@elem, -text => $elem->{Text},
-                                config($elem,              
+                                config($elem,
                                 -background => 'bgcolor'));
     }
    $widget->grid(-in => $tw, -row => $table->{Row}, -column => $table->{Col},
@@ -369,7 +370,7 @@ sub td_grid
    $table->{Col}++;
   }
  return $f;
-} 
+}
 
 
 
@@ -402,9 +403,9 @@ sub broken_td
     {
      push(@elem,-justify => 'right',-anchor => 'e') if ($al =~ /RIGHT/i);
     }
-   my $widget = Tk::HTML->new($tw, -relief => 'ridge',@elem, 
+   my $widget = Tk::HTML->new($tw, -relief => 'ridge',@elem,
                               config($elem,
-                              -background => 'bgcolor'), 
+                              -background => 'bgcolor'),
                               -width => 0, -height => 0);
    $widget->grid(-in => $tw, -row => $table->{Row}, -column => $table->{Col},
                  config($elem,
@@ -420,7 +421,7 @@ sub broken_td
    $table->{Col}++;
   }
  return $f;
-} 
+}
 
 sub format_attr
 {
@@ -521,7 +522,7 @@ sub form
  return $w;
 }
 
-sub input 
+sub input
 {
  my($w,$f,$elem) = @_;
  return 0 unless $f;
@@ -529,11 +530,11 @@ sub input
  my $type = $elem->attr('type');
  $elem->attr(type => ($type = 'TEXT')) unless (defined $type);
  $type = "\U$type";
- $form->$type($elem);
+ $form->$type($elem) if defined $form;
  return $w;
 }
 
-sub option 
+sub option
 {
  my ($w,$f,$elem) = @_;
  if ($f)
@@ -557,12 +558,12 @@ sub OptionText
    $text =~ s/^\s+//;
    $text =~ s/\s+$//;
    $elem->attr('value' => $text) unless ($val);
-   if ($elem->attr('value') ne $text)                         
-    {                                                     
+   if ($elem->attr('value') ne $text)
+    {
      $mb->{'FORM_MAP'} = {} unless (exists $mb->{'FORM_MAP'});
      $mb->{'FORM_MAP'}{$text} = $elem->attr('value');
-    }                                                     
-   $mb->options([$text]);                                 
+    }
+   $mb->options([$text]);
    $mb->setOption($text) if ($elem->attr('selected'));
   }
  else
@@ -583,10 +584,10 @@ sub MultipleText
    $elem = {} unless (defined $elem);
    $elem->{'VALUE'} = $text unless (exists $elem->{'VALUE'});
    if ($elem->{'VALUE'} ne $text)
-    {                        
+    {
      $lb->{'FORM_MAP'} = [] unless (exists $lb->{'FORM_MAP'});
      $lb->{'FORM_MAP'}[$index] = $elem->{'VALUE'};
-    }                        
+    }
    $lb->insert($index,$text);
    $lb->selection('set',$index) if (defined $elem->{'SELECTED'});
   }
@@ -596,16 +597,16 @@ sub MultipleText
   }
 }
 
-sub select 
+sub select
 {
  my($h,$f,$elem) = @_;
- if ($f) 
+ if ($f)
   {
    $h->{NL} = 0;
    my $w = $h->Widget;
    my $form = $h->CurrentForm;
    $h->{'option'} = [];
-   if ($elem->attr('multiple') || (defined $elem->{'size'} && $elem->{'size'} > 1)) 
+   if ($elem->attr('multiple') || (defined $elem->{'size'} && $elem->{'size'} > 1))
     {
      my $size = $elem->attr('size');
      $size = 15 unless ($size);
@@ -618,8 +619,8 @@ sub select
        $$var   = Tk::Callback->new([\&Tk::HTML::Form::MultipleValue,$e]);
       }
      $h->TextHandler([\&MultipleText,$h,$e]);
-    } 
-   else 
+    }
+   else
     {
      my $buttonvar = "__not__";
      my $mb = $w->Optionmenu(-textvariable => \$buttonvar,-relief => 'raised');
@@ -631,8 +632,8 @@ sub select
       }
      $h->TextHandler([\&OptionText,$h,$mb]);
     }
-  } 
- else 
+  }
+ else
   {
    pop(@{$h->{'Text'}});
    delete $h->{'option'};
@@ -640,10 +641,10 @@ sub select
  return $f;
 }
 
-sub textarea 
+sub textarea
 {
   my($h,$f,$elem) = @_;
-  if ($f) 
+  if ($f)
    {
     my $rows = $elem->attr('rows') || 20;
     my $cols = $elem->attr('cols') || 12;
@@ -661,15 +662,15 @@ sub textarea
     $w->window('create','insert',-window => $t);
     $h->{NL} = 0;
     $h->TextHandler([$t,'insert','end']);
-   } 
-  else 
+   }
+  else
    {
     pop(@{$h->{'Text'}});
    }
  return $f;
 }
-  
-sub base 
+
+sub base
 {
  print STDERR "base(",join(',',@_),")\n";
  my($h,$f,$elem) = @_;
@@ -680,7 +681,7 @@ sub base
  return 1
 }
 
-sub isindex 
+sub isindex
 {
  my($h,$f,$elem) = @_;
  $h->{'BODY'} = 0;
@@ -692,7 +693,7 @@ sub isindex
    my $e = $w->Entry;
    $e->bind('<Return>',[$w,'call_ISINDEX',$e]);
    $w->window('create','end',-window => $e);
-   $h->{NL} = 0;    
+   $h->{NL} = 0;
    $h->hr($f,$elem);
   }
  return $f;
@@ -711,15 +712,15 @@ sub img
    my $al = "\U$al";
    if ($al eq "MIDDLE")
     {
-     @al = (-align => 'center') 
+     @al = (-align => 'center')
     }
    elsif ($al eq "BOTTOM")
     {
-     @al = (-align => 'baseline') 
+     @al = (-align => 'baseline')
     }
    elsif ($al eq "TOP")
     {
-     @al = (-align => 'top') 
+     @al = (-align => 'top')
     }
    else
     {
@@ -735,7 +736,7 @@ sub img
  else
   {
    $w->window('create','insert','-window' => $l, @al);
-   $h->{NL} = 0;                
+   $h->{NL} = 0;
   }
  my $src = $elem->attr('src');
  $w->FindImage($src,$l) if ($src);
@@ -746,11 +747,11 @@ sub img
    if ($elem->attr('ismap') && $a)
     {
      $l->bind('<1>',[$w,'IMG_CLICK',$l,'ISMAP',$a->attr('href')]);
-    } 
+    }
    elsif ($elem->attr('image'))
     {
      $l->bind('<1>',[$w,'IMG_CLICK',$l,'IMAGE',$f,$elem->attr('name')]);
-    } 
+    }
    elsif ($a)
     {
      $l->bind('<1>',[$w,'IMG_CLICK',$l,'AREF',$a->attr('href')]);
@@ -847,11 +848,11 @@ sub List
    $elem->{Num} = 0;
    push(@{$w->{'List'}},['LI' . $elem->tag,0,$elem->{'_Start_'}]);
    my $depth = @{$w->{'List'}};
-   if ($depth > 1) 
+   if ($depth > 1)
     {
      my $len = ($depth - 1) * 20;
      my $tag = $w->GenTag($elem->tag . "temp",
-                          -lmargin1 => $len, 
+                          -lmargin1 => $len,
                           -lmargin2 => $len,
                           -rmargin => $len);
      $w->tagAdd($tag,${${$w->{'List'}}[$depth-2]}[2],${${$w->{'List'}}[$depth-1]}[2]);
@@ -860,12 +861,12 @@ sub List
  else
   {
    my $depth = @{$w->{'List'}};
-   if ($depth > 1) 
+   if ($depth > 1)
     {
      ${${$w->{'List'}}[$depth - 2]}[2] = $elem->{'_End_'};
      my $len = $depth * 20;
      my $tag = $w->GenTag($elem->tag,
-                          -lmargin1 => $len, 
+                          -lmargin1 => $len,
                           -lmargin2 => $len,
                           -rmargin => $len);
      $w->tagAdd($tag,${${$w->{'List'}}[$depth - 1]}[2],$elem->{'_End_'});
@@ -919,7 +920,7 @@ sub traverse
          my $w = $h->{'widget'};
          $w->insert('insert',' ',qw(text)) unless ($h->{NL});
          $w->insert('insert',$text,qw(text));
-         $h->{NL} = 0;                
+         $h->{NL} = 0;
          $h->{NL} = 1 if ($text =~ /\n$/);
         }
       }

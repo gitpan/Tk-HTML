@@ -1,7 +1,6 @@
-
+use vars qw($VERSION);
+$VERSION = sprintf '3.%03d', q$Revision: #3$ =~ /\D(\d+)\s*$/;
 use Tk::MMutil;
-
-$VERSION = '3.002'; # $Id: //depot/Tk-HTML/Makefile.PL#2$
 
 my @missing = ();
 
@@ -18,7 +17,7 @@ if (@missing)
         join("\n",@missing),"\n";
  }
 
-Tk::MMutil::TkExtMakefile(      
+Tk::MMutil::TkExtMakefile(
       'NAME'      => 'Tk::HTML',
       'VERSION'   => $VERSION,
       'EXE_FILES' => ['tkweb'],

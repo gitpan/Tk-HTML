@@ -5,7 +5,7 @@ require Tk::HTML::Handler;
 use Carp;
 
 use vars qw($VERSION);
-$VERSION = '3.002'; # $Id: //depot/Tk-HTML/HTML.pm#2$
+$VERSION = '3.002'; # $Id: //depot/Tk-HTML/HTML.pm#3 $
 
 @ISA = qw(Tk::Derived Tk::ROText);
 use strict;
@@ -27,7 +27,7 @@ sub Font
  return $name;
 }
 
-sub call_ISINDEX 
+sub call_ISINDEX
 {
  my($w,$e) = @_;
  my $method = "GET";
@@ -55,20 +55,20 @@ sub FindImage
   }
 }
 
-sub IMG_CLICK 
+sub IMG_CLICK
 {
  my($w,$c,$t,$aref,$n) = @_;
  my $Ev = $c->XEvent;
  my $cor = $c->cget(-borderwidth);
- if($t eq "ISMAP") 
+ if($t eq "ISMAP")
   {
    $w->HREF($aref . "?" . ($Ev->x - $cor) . "," . ($Ev->y - $cor),'GET');
-  } 
+  }
  elsif ($t eq "AREF")
   {
    $w->HREF($aref,'GET');
   }
- else 
+ else
   {
    my $s = "$n.x=" . ($Ev->x - $cor) . "&$n.y=" . ($Ev->y - $cor);
    $aref->Submit($s);
@@ -82,7 +82,7 @@ sub HTML::dump {
 
 sub plain
 {
- my ($w,$text) = @_; 
+ my ($w,$text) = @_;
  my $var = \$w->{Configure}{-plain};
  if (@_ > 1)
   {
@@ -124,22 +124,22 @@ sub parse
 }
 
 #
-# This is a clone of 'traverse' which calls callback 
+# This is a clone of 'traverse' which calls callback
 # for end _all_ tags even 'empty' ones.
-# 
+#
 sub HTML::Element::traverse_all
 {
  my ($self, $callback, $depth) = @_;
  $depth ||= 0;
- if (&$callback($self, 1, $depth)) 
+ if (&$callback($self, 1, $depth))
   {
-   for (@{$self->{'_content'}}) 
+   for (@{$self->{'_content'}})
     {
-     if (ref $_) 
+     if (ref $_)
       {
        $_->traverse_all($callback, $depth+1);
-      } 
-     else 
+      }
+     else
       {
        &$callback($_, 1, $depth+1);
       }
@@ -151,7 +151,7 @@ sub HTML::Element::traverse_all
 
 sub html
 {
- my ($w,$html,$frag) = @_; 
+ my ($w,$html,$frag) = @_;
  my $var = \$w->{Configure}{-html};
  if (@_ > 1)
   {
@@ -168,7 +168,7 @@ sub html
 
 sub file
 {
- my ($w,$file) = @_; 
+ my ($w,$file) = @_;
  my $var = \$w->{Configure}{-file};
  if (@_ > 1)
   {
@@ -191,7 +191,7 @@ sub InitObject
 {
  my ($w,$args) = @_;
  $w->SUPER::InitObject($args);
- 
+
  $args->{-wrap} = 'word';
  $args->{-font} = $w->Font(family => 'courier');
 
@@ -209,6 +209,7 @@ sub InitObject
  $w->tagConfigure('ADDRESS', -font => $w->Font(family => 'times',slant => 'i'));
  $w->tagConfigure('HREF',-underline => 1, -font => $w->Font(family => 'times',slant => 'i', weight => 'bold' ));
  $w->tagConfigure('CENTER',-justify => 'center');
+ $w->tagConfigure('SUP',-offset => '6p');
  $w->{Configure} = {};
  $w->ConfigSpecs('-showlink' => ['CALLBACK',undef,undef,undef],
                  '-base'     => ['PASSIVE',,undef,undef,undef],

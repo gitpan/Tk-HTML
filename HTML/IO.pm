@@ -1,6 +1,6 @@
 package LWP::IO;
 
-# $Id: //depot/Tk-HTML/HTML/IO.pm#2$
+# $Id: //depot/Tk-HTML/HTML/IO.pm#2 $
 
 require Tk;
 require LWP::Debug;
@@ -15,7 +15,7 @@ LWP::TkIO - Tk I/O routines for the LWP library
 
 
 use vars qw($VERSION);
-$VERSION = '3.002'; # $Id: //depot/Tk-HTML/HTML/IO.pm#2$
+$VERSION = '3.002'; # $Id: //depot/Tk-HTML/HTML/IO.pm#2 $
 
  use Tk;
  require LWP::TkIO;

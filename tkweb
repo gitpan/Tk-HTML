@@ -4,20 +4,20 @@
 
 tkweb - rough and ready web browser
 
-=head1 SYNOPSIS 
+=head1 SYNOPSIS
 
 tkweb <url to view>
 
 =head1 DESCRIPTION
 
-Uses a derivative of Tk::Text and  libwww package to 
+Uses a derivative of Tk::Text and  libwww package to
 produce a web browser.
 
 =head1 BUGS
 
 Lots...
 
-=cut  
+=cut
 
 use Tk;
 require Tk::Web;
@@ -33,28 +33,28 @@ my $urltxt;
 my $showlink;
 
 my $mw = MainWindow->new();
-my $mb  = $mw->Menubar->pack(-fill => 'x');
-my $fm  = $mb->Menubutton(-text => 'File', -underline => 0)->pack(-side => 'left');; 
-my $em  = $mb->Menubutton(-text => 'Edit', -underline => 0)->pack(-side => 'left');; 
-my $vm  = $mb->Menubutton(-text => 'View', -underline => 0)->pack(-side => 'left');; 
-my $hm  = $mb->Menubutton(-text => 'Help', -underline => 0)->pack(-side => 'right');; 
+my $mb  = $mw->menu;
+my $fm  = $mb->Menubutton(-text => 'File', -underline => 0);
+my $em  = $mb->Menubutton(-text => 'Edit', -underline => 0);
+my $vm  = $mb->Menubutton(-text => 'View', -underline => 0);
+my $hm  = $mb->Menubutton(-text => 'Help', -underline => 0);
 my $but = $mw->Frame->pack(-fill => 'x');
 my $w   = Tk::Web->new($mw,-showlink => sub { $showlink = shift }, -urlcommand => sub { $urltxt = shift} );
 my $e   = $mw->LabEntry(-label => 'Location:',-labelPack => [-side => 'left',-anchor => 'e'],-textvariable => \$urltxt )->pack(-fill => 'x');
 
 $e->bind('<Return>',[$w,'url',Tk::Ev(['get'])]);
 
-$w->{'-header'} = {'Accept' => join(',','text/html', 'text/plain', 'image/gif', 
+$w->{'-header'} = {'Accept' => join(',','text/html', 'text/plain', 'image/gif',
                                     'image/x-xbitmap', 'image/x-pixmap', '*/*'),
 		   'User-Agent' => 'tkweb/.xx'};
 
 $w->pack(-expand => 1, -fill => 'both');
-$fm->command(-label => 'Open...',-underline => 0, -command => [$w,'Open']); 
-$fm->command(-label => 'Save as...',-underline => 0, -command => [$w,'SaveAs']); 
-$fm->command(-label => 'Exit',-underline => 1, -command => [$mw,'destroy']); 
-$vm->command(-label => 'Reload',-underline => 0, -command => [$w,'Reload']); 
-$vm->command(-label => 'Source...',-underline => 0, -command => [$w,'ShowSource']); 
-$vm->command(-label => 'HTML...',-underline => 0, -command => [$w,'ShowHTML']); 
+$fm->command(-label => 'Open...',-underline => 0, -command => [$w,'Open']);
+$fm->command(-label => 'Save as...',-underline => 0, -command => [$w,'SaveAs']);
+$fm->command(-label => 'Exit',-underline => 1, -command => [$mw,'destroy']);
+$vm->command(-label => 'Reload',-underline => 0, -command => [$w,'Reload']);
+$vm->command(-label => 'Source...',-underline => 0, -command => [$w,'ShowSource']);
+$vm->command(-label => 'HTML...',-underline => 0, -command => [$w,'ShowHTML']);
 
 $but->Button(-text => 'Back', -command => [$w,'Back'])->pack(-side => 'left');
 $but->Button(-text => 'Forward', -command => [$w,'Forward'])->pack(-side => 'left');
